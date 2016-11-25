@@ -41,6 +41,7 @@ void setup() {
 
 void loop() {
   _homey->handleWebserverRequest(_webServer);
+
   checkKeypadInputTimeOut(_buzzer);
   
   String enteredCode = getEnteredKeypadCode(_buzzer, _runningVars->isInBindingMode());

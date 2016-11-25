@@ -28,8 +28,10 @@ void Homey::checkIfCheckInIsNeeded() {
       debugln("Yes, executing check-in.");
       if (_config->isComplete())
         executeCheckIn();
-      else
+      else {
         debugln("Not checking in with Homey, device binding not complete.");
+        _checkInTimer = millis();
+      }
     }
     else
       debugln("No.");
@@ -50,6 +52,7 @@ void Homey::executeCheckIn() {
   if (responseJsonText.length() == 0) {
     _checkInTimer = 0;
     debugln("Check-in response is empty.");
+    _checkInTimer = millis();
     return;
   }
   DynamicJsonBuffer jsonBuffer;
@@ -65,16 +68,19 @@ void Homey::executeCheckIn() {
   if (!successful) {
     _checkInTimer = 0;
     debugln("Check-in response not successful.");
+    _checkInTimer = millis();
     return;
   }
   if ((homeySecondsSinceEpoch <= 0) || (checkInTimeOutInSeconds <= 0)) { 
     _checkInTimer = 0;
     debugln("Check-in response does not contain seconds since epoch or check-in time-out.");
+    _checkInTimer = millis();
     return;
   }
   if (!isValidHash(hash, homeySecondsSinceEpoch, true)) {
     _checkInTimer = 0;
     debugln("Hash is not valid.");
+    _checkInTimer = millis();
     return;
   }
 
@@ -187,7 +193,12 @@ void Homey::handleWebserverRequest(WiFiServer* webServer) {
       String type = jsonRequest["type"];
       if (type.length() == 0)
         jsonResponse["errorMessage"] = "Missing type of request";
-      else if (type == "bind") {
+      else if (type == "test") {
+        jsonResponse["successful"] = true;
+        jsonResponse["errorMessage"] = "";
+        jsonResponse["test"] = "Your test request has been received. This is the response.";
+        jsonResponse["requestJson"] = jsonRequest;
+      } else if (type == "bind") {
         if (!_runningVars->isInBindingMode())
           jsonResponse["errorMessage"] = "Device not in binding mode.";
         else {

@@ -26,7 +26,13 @@ void Wifi::initialize(String ssidName, Configuration* config) {
   debug("Waiting for WiFi connection... ");
   while (WiFi.status() != WL_CONNECTED)
     delay(500);
-  debugln("Done.");
+  debug("Done. IP address: ");
+  debug(WiFi.localIP().toString());
+  debug(". Subnet: ");
+  debug(WiFi.subnetMask().toString());
+  debug(". Gateway: ");
+  debug(WiFi.gatewayIP().toString());
+  debugln(".");
 }
 
 void Wifi::resetSettings() {

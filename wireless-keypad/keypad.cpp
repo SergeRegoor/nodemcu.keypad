@@ -3,6 +3,8 @@
 #include "keypad.h"
 #include "debug.h"
 
+// Pins: Side of wire strip oriented to the "*" should go to pin D0.
+//       Side of wire strip oriented to the "D" should go to pin D7.
 const byte KEYPAD_ROWS = 4; //four rows
 const byte KEYPAD_COLS = 4; //four columns
 byte rowPins[KEYPAD_ROWS] = {D7, D6, D5, D4}; //connect to the row pinouts of the keypad
